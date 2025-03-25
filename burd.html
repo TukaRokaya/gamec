@@ -39,6 +39,32 @@
         .button:hover {
             background-color: #d63415;
         }
+
+        /* Mobile buttons */
+        .mobile-controls {
+            position: fixed;
+            bottom: 10px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .mobile-controls button {
+            font-size: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ff4500;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .mobile-controls button:hover {
+            background-color: #d63415;
+        }
     </style>
 </head>
 <body>
@@ -48,12 +74,18 @@
         <button class="button" id="backButton">Back to Menu</button>
         <button class="button" id="restartButton">Restart Game</button>
     </div>
+    <div class="mobile-controls">
+        <button id="upButton">⬆️</button>
+        <button id="downButton">⬇️</button>
+    </div>
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const resetButton = document.getElementById("resetButton");
         const backButton = document.getElementById("backButton");
         const restartButton = document.getElementById("restartButton");
+        const upButton = document.getElementById("upButton");
+        const downButton = document.getElementById("downButton");
 
         // Load images
         const birdImage = new Image();
@@ -150,11 +182,22 @@
         });
 
         backButton.addEventListener("click", () => {
-            alert("Back to Menu (Placeholder)");
+            // Pausing the game when back button is clicked
+            gamePaused = true;
+            alert("Game paused. Going back to menu (Placeholder).");
         });
 
         restartButton.addEventListener("click", () => {
-            restartGame();
+            resetGame(); // Ensure restart works by calling reset function
+            gameLoop(); // Start game loop immediately after reset
+        });
+
+        upButton.addEventListener("click", () => {
+            if (!gameOver && !gamePaused) bird.velocity = -7; // Jump when up button is pressed
+        });
+
+        downButton.addEventListener("click", () => {
+            if (!gameOver && !gamePaused) bird.velocity = 5; // Drop faster when down button is pressed
         });
 
         function resetGame() {
@@ -163,11 +206,7 @@
             score = 0;
             gameOver = false;
             gamePaused = false;
-            gameLoop();
-        }
-
-        function restartGame() {
-            resetGame(); // Restart the game by calling the reset function
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
         }
 
         birdImage.onload = () => { // Start game after images load
